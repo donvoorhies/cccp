@@ -1,0 +1,249 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CCCP — Clean Cookie Consent 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/donvoorhies/cccp/issues\n"
+"POT-Creation-Date: 2026-03-06 00:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: cccp\n"
+
+
+#: cccp.php:40
+msgid "Accept All"
+msgstr ""
+
+#: modules/admin.php:298
+msgid "Accept button label"
+msgstr ""
+
+#: modules/admin.php:282
+msgid "Always-allowed scripts"
+msgstr ""
+
+#: modules/frontend.php:358
+msgid "Analytics"
+msgstr ""
+
+#: modules/policy.php:70
+msgid "Analytics Cookies"
+msgstr ""
+
+#: modules/admin.php:264
+msgid "Analytics scripts"
+msgstr ""
+
+#: modules/admin.php:207
+msgid "Appearance"
+msgstr ""
+
+#: modules/admin.php:232
+msgid "Banner text"
+msgstr ""
+
+#: modules/admin.php:192
+msgid "CCCP — Clean Cookie Consent"
+msgstr ""
+
+#: modules/admin.php:17 #: modules/admin.php:18
+msgid "Clean Cookie Consent"
+msgstr ""
+
+#: modules/admin.php:193
+msgid "Clean Cookie Consent — no tracking, no iron curtain."
+msgstr ""
+
+#: modules/policy.php:43 #: modules/policy.php:66 #: modules/policy.php:89
+msgid "Configured handles/fragments:"
+msgstr ""
+
+#: modules/policy.php:92
+msgid "Consent and Withdrawal"
+msgstr ""
+
+#: modules/frontend.php:339
+msgid "Cookie consent"
+msgstr ""
+
+#: modules/policy.php:95
+msgid "Cookie Lifetime"
+msgstr ""
+
+#: modules/admin.php:238
+msgid "Cookie lifetime (days)"
+msgstr ""
+
+#: modules/policy.php:17 #: modules/policy.php:18 #: modules/policy.php:131
+msgid "Cookie Policy"
+msgstr ""
+
+#: modules/policy.php:194
+msgid "Cookie Policy Generator"
+msgstr ""
+
+#: modules/policy.php:200
+msgid "Cookie Policy page created or updated successfully."
+msgstr ""
+
+#: modules/frontend.php:215
+msgid "Cookie settings"
+msgstr ""
+
+#: modules/policy.php:204
+msgid "Could not create or update the Cookie Policy page."
+msgstr ""
+
+#: modules/policy.php:216
+msgid "Create / Update Page"
+msgstr ""
+
+#: modules/admin.php:249
+msgid "Enable \"Cookie settings\" footer button"
+msgstr ""
+
+#: modules/admin.php:285
+msgid "Enter one WordPress script handle or URL fragment per line. Example: google-tag"
+msgstr ""
+
+#: modules/admin.php:244
+msgid "Footer controls"
+msgstr ""
+
+#: modules/frontend.php:351
+msgid "Functional"
+msgstr ""
+
+#: modules/policy.php:47
+msgid "Functional Cookies"
+msgstr ""
+
+#: modules/admin.php:270
+msgid "Functional scripts"
+msgstr ""
+
+#: modules/admin.php:205
+msgid "General"
+msgstr ""
+
+#: modules/policy.php:195
+msgid "Generate a privacy policy page that reflects your current CCCP settings and script categories."
+msgstr ""
+
+#: modules/policy.php:75
+msgid "Google Analytics (gtag)"
+msgstr ""
+
+#: modules/policy.php:78
+msgid "Google Tag Manager"
+msgstr ""
+
+#: modules/policy.php:104
+msgid "Last updated: %s"
+msgstr ""
+
+#: modules/frontend.php:344
+msgid "Preferences"
+msgstr ""
+
+#: modules/policy.php:41
+msgid "Preferences Cookies"
+msgstr ""
+
+#: modules/admin.php:276
+msgid "Preferences scripts"
+msgstr ""
+
+#: modules/policy.php:208
+msgid "Preview"
+msgstr ""
+
+#: modules/admin.php:292
+msgid "Primary colour"
+msgstr ""
+
+#: cccp.php:41
+msgid "Reject All"
+msgstr ""
+
+#: modules/admin.php:304
+msgid "Reject button label"
+msgstr ""
+
+#: modules/admin.php:310
+msgid "Save button label"
+msgstr ""
+
+#: cccp.php:42
+msgid "Save preferences"
+msgstr ""
+
+#: modules/admin.php:318
+msgid "Save settings"
+msgstr ""
+
+#: modules/admin.php:206
+msgid "Scripts"
+msgstr ""
+
+#: modules/admin.php:197
+msgid "Settings saved."
+msgstr ""
+
+#: modules/admin.php:202
+msgid "Settings tabs"
+msgstr ""
+
+#: modules/admin.php:255
+msgid "Show \"Clean cookies only\" badge"
+msgstr ""
+
+#: modules/policy.php:71
+msgid "These cookies collect anonymous usage statistics so the site owner can understand what content is useful. They are optional and disabled by default until you consent."
+msgstr ""
+
+#: modules/policy.php:42
+msgid "These cookies remember choices you make on the site, such as language or interface preferences. They help the site feel consistent without profiling you."
+msgstr ""
+
+#: modules/policy.php:48
+msgid "These cookies support optional features such as embedded media players or non-essential interface components. They are blocked unless you explicitly allow them."
+msgstr ""
+
+#: modules/policy.php:61 #: modules/policy.php:84
+msgid "This category includes: %s."
+msgstr ""
+
+#: modules/policy.php:38
+msgid "Unlike much of the web, this site does not track you for advertising purposes. There are no marketing cookies here — by choice. We use only the minimum cookie categories needed for a respectful personal website, and every non-essential category stays off until you opt in."
+msgstr ""
+
+#: modules/policy.php:55
+msgid "Vimeo embeds"
+msgstr ""
+
+#: modules/policy.php:93
+msgid "You can change or withdraw your consent at any time using the \"Cookie settings\" button in the footer. Updating your choices applies on page reload so script blocking remains reliable and predictable."
+msgstr ""
+
+#: modules/policy.php:164
+msgid "You do not have permission to do that."
+msgstr ""
+
+#: modules/admin.php:88
+msgid "You do not have permission to update these settings."
+msgstr ""
+
+#: modules/policy.php:98
+msgid "Your consent is stored in a browser cookie for %d days."
+msgstr ""
+
+#: modules/policy.php:52
+msgid "YouTube embeds"
+msgstr ""
+
+#: modules/frontend.php:389
+msgid "🔒 Clean cookies only — no surveillance capitalism on this site"
+msgstr ""
