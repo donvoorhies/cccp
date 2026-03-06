@@ -1,0 +1,25 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Node / build artifacts (if ever used locally)
+node_modules/
+dist/
+build/
+
+# Composer/vendor (not used currently, keep clean if introduced)
+vendor/
+
+# Archives/checksums generated externally
+*.zip
+*.sha256
+
+# POT/PO/MO build caches
+*.pot~
+*.po~
+*.mo~
