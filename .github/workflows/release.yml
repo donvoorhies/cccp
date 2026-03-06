@@ -1,0 +1,49 @@
+name: Build and Attach Release Assets
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare artifact names
+        id: vars
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          ZIP_NAME="cccp-${VERSION}.zip"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "zip_name=${ZIP_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Build plugin zip
+        run: |
+          ZIP_NAME="${{ steps.vars.outputs.zip_name }}"
+          zip -r "$ZIP_NAME" . \
+            -x ".git/*" \
+               ".github/*" \
+               "*.zip" \
+               "*.sha256"
+
+      - name: Generate SHA256
+        run: |
+          ZIP_NAME="${{ steps.vars.outputs.zip_name }}"
+          sha256sum "$ZIP_NAME" > "${ZIP_NAME}.sha256"
+
+      - name: Attach assets to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.vars.outputs.tag }}
+          files: |
+            ${{ steps.vars.outputs.zip_name }}
+            ${{ steps.vars.outputs.zip_name }}.sha256
