@@ -1,1 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CCCP — Clean Cookie Consent</title>
+  <meta name="description" content="Clean Cookie Consent — no tracking, no iron curtain. A privacy-first WordPress cookie consent plugin with no Marketing category, by design." />
 
+  <!-- No tracking. No analytics. No irony. -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:     #cc0000;
+      --red-dim: #991000;
+      --black:   #0a0a0a;
+      --off-white: #f2efe8;
+      --grey:    #888;
+      --mono:    'IBM Plex Mono', monospace;
+      --sans:    'IBM Plex Sans', sans-serif;
+      --display: 'Bebas Neue', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--off-white);
+      font-family: var(--sans);
+      font-size: 17px;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* ── Constructivist background geometry ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          -55deg,
+          transparent,
+          transparent 60px,
+          rgba(204,0,0,0.03) 60px,
+          rgba(204,0,0,0.03) 61px
+        );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Layout ── */
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(204,0,0,0.2);
+    }
+
+    .nav-logo {
+      font-family: var(--display);
+      font-size: 1.4rem;
+      letter-spacing: 0.08em;
+      color: var(--red);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--grey);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--off-white); }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.2s;
+    }
+
+    .hero-title {
+      font-family: var(--display);
+      font-size: clamp(4rem, 12vw, 9rem);
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      color: var(--off-white);
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.35s;
+    }
+
+    .hero-title span {
+      color: var(--red);
+      display: block;
+    }
+
+    .hero-sub {
+      margin-top: 2rem;
+      font-size: 1.15rem;
+      color: var(--grey);
+      max-width: 520px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.5s;
+    }
+
+    .hero-sub em {
+      color: var(--off-white);
+      font-style: normal;
+    }
+
+    .hero-actions {
+      margin-top: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.65s;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.85rem 1.75rem;
+      border-radius: 2px;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--red-dim);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--off-white);
+      border: 1px solid rgba(242,239,232,0.25);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--off-white);
+      transform: translateY(-1px);
+    }
+
+    /* Big decorative CCCP behind hero */
+    .hero-bg-text {
+      position: absolute;
+      right: -0.05em;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--display);
+      font-size: clamp(12rem, 28vw, 22rem);
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: rgba(204,0,0,0.06);
+      user-select: none;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(204,0,0,0.4), transparent);
+      margin: 0 2rem;
+    }
+
+    /* ── The statement ── */
+    .statement {
+      padding: 6rem 2rem;
+      text-align: center;
+    }
+
+    .statement blockquote {
+      font-family: var(--display);
+      font-size: clamp(1.8rem, 5vw, 3.2rem);
+      line-height: 1.15;
+      letter-spacing: 0.02em;
+      color: var(--off-white);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .statement blockquote strong {
+      color: var(--red);
+    }
+
+    .statement cite {
+      display: block;
+      margin-top: 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--grey);
+      font-style: normal;
+    }
+
+    /* ── Features ── */
+    .features {
+      padding: 5rem 2rem;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(204,0,0,0.25);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5px;
+      background: rgba(204,0,0,0.15);
+      border: 1px solid rgba(204,0,0,0.15);
+    }
+
+    .feature {
+      background: var(--black);
+      padding: 2rem;
+      transition: background 0.2s;
+    }
+
+    .feature:hover {
+      background: rgba(204,0,0,0.05);
+    }
+
+    .feature-icon {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .feature h3 {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--off-white);
+      margin-bottom: 0.5rem;
+    }
+
+    .feature p {
+      font-size: 0.9rem;
+      color: var(--grey);
+      line-height: 1.6;
+    }
+
+    /* ── The FAQ ── */
+    .faq {
+      padding: 5rem 2rem;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid rgba(242,239,232,0.08);
+      padding: 1.75rem 0;
+    }
+
+    .faq-item:first-of-type { border-top: 1px solid rgba(242,239,232,0.08); }
+
+    .faq-q {
+      font-family: var(--mono);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--off-white);
+      margin-bottom: 0.6rem;
+      letter-spacing: 0.02em;
+    }
+
+    .faq-a {
+      font-size: 0.95rem;
+      color: var(--grey);
+      max-width: 640px;
+    }
+
+    .faq-a strong {
+      color: var(--off-white);
+      font-weight: 600;
+    }
+
+    /* ── The no-marketing call-out ── */
+    .callout {
+      margin: 0 2rem;
+      padding: 3rem;
+      border: 1px solid var(--red);
+      background: rgba(204,0,0,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .callout::before {
+      content: '✕';
+      position: absolute;
+      right: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--display);
+      font-size: 8rem;
+      color: rgba(204,0,0,0.08);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .callout-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 1rem;
+    }
+
+    .callout p {
+      font-family: var(--display);
+      font-size: clamp(1.3rem, 3vw, 2rem);
+      line-height: 1.2;
+      color: var(--off-white);
+      max-width: 580px;
+    }
+
+    .callout-sub {
+      margin-top: 1rem;
+      font-family: var(--sans) !important;
+      font-size: 0.9rem !important;
+      color: var(--grey) !important;
+      font-family: var(--sans);
+    }
+
+    /* ── Download / CTA ── */
+    .cta {
+      padding: 6rem 2rem;
+      text-align: center;
+    }
+
+    .cta h2 {
+      font-family: var(--display);
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      letter-spacing: 0.03em;
+      margin-bottom: 1rem;
+    }
+
+    .cta p {
+      color: var(--grey);
+      font-size: 1rem;
+      margin-bottom: 2.5rem;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Footer ── */
+    footer {
+      padding: 2.5rem 2rem;
+      border-top: 1px solid rgba(242,239,232,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-left {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--grey);
+      letter-spacing: 0.05em;
+    }
+
+    .footer-left a {
+      color: var(--grey);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-left a:hover { color: var(--off-white); }
+
+    .footer-badge {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--grey);
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .footer-badge span {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #2ecc71;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      nav { padding: 1rem; }
+      .nav-links { gap: 1.2rem; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      .callout { margin: 0 1.5rem; padding: 2rem; }
+      .callout::before { display: none; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <a class="nav-logo" href="#">CCCP</a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="https://github.com/donvoorhies/cccp" target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="wrap">
+      <p class="hero-eyebrow">WordPress Cookie Consent Plugin</p>
+      <h1 class="hero-title">
+        Clean<br>
+        <span>Cookie</span><br>
+        Consent
+      </h1>
+      <p class="hero-sub">
+        No tracking. No iron curtain.<br>
+        <em>No Marketing category — by design, not by accident.</em>
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://github.com/donvoorhies/cccp/releases/latest" target="_blank" rel="noopener">
+          ↓ Download latest
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/donvoorhies/cccp" target="_blank" rel="noopener">
+          View on GitHub
+        </a>
+      </div>
+    </div>
+    <div class="hero-bg-text" aria-hidden="true">CCCP</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- The statement -->
+  <section class="statement reveal">
+    <blockquote>
+      "There is no Marketing category.<br>
+      <strong>That is not an oversight —<br>it is the point.</strong>"
+    </blockquote>
+    <cite>— readme.txt, line 1</cite>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- No-marketing callout -->
+  <div class="callout reveal" id="philosophy">
+    <p class="callout-label">Design decision</p>
+    <p>Most consent plugins are built by marketing teams, for marketing teams.</p>
+    <p class="callout-sub">
+      CCCP is built for personal sites, portfolios, and blogs whose owners have made
+      a conscious decision not to track their visitors for advertising. If you need
+      marketing cookies, there are plenty of other plugins for that.
+      CCCP is unapologetically not one of them.
+    </p>
+  </div>
+
+  <!-- Features -->
+  <section class="features reveal" id="features">
+    <div class="wrap">
+      <p class="section-label">What it does</p>
+    </div>
+    <div class="wrap">
+      <div class="features-grid">
+        <div class="feature">
+          <span class="feature-icon">🔒</span>
+          <h3>Explicit opt-in</h3>
+          <p>Everything is blocked until your visitor actively makes a choice. No implied consent, no pre-ticked boxes.</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">⚡</span>
+          <h3>Script blocking</h3>
+          <p>Scripts are intercepted server-side before output. GA4, GTM, YouTube embeds — nothing loads without consent.</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">📄</span>
+          <h3>Policy generator</h3>
+          <p>Generates a plain-English cookie policy page based on your actual configuration. One click to publish.</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">🎛️</span>
+          <h3>Three categories</h3>
+          <p>Preferences, Functional, Analytics. That's it. Visitors understand what they're agreeing to.</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">🇪🇺</span>
+          <h3>Datatilsynet compliant</h3>
+          <p>Explicit opt-in defaults satisfy EU ePrivacy and Danish Datatilsynet requirements out of the box.</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">🚫</span>
+          <h3>Zero telemetry</h3>
+          <p>No SaaS. No external API calls. No phoning home. Consent lives in a first-party browser cookie only.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- FAQ -->
+  <section class="faq reveal" id="faq">
+    <div class="wrap">
+      <p class="section-label">FAQ</p>
+
+      <div class="faq-item">
+        <p class="faq-q">Can I add a Marketing category?</p>
+        <p class="faq-a"><strong>No.</strong> The absence of Marketing is a deliberate product decision. If you need marketing cookies, use a plugin designed for that purpose.</p>
+      </div>
+
+      <div class="faq-item">
+        <p class="faq-q">Why does it reload the page after consent?</p>
+        <p class="faq-a">Script queue decisions are made server-side in PHP on page load. A reload is the simplest and most reliable way to ensure blocked and allowed scripts align exactly with consent. No dynamic injection, no race conditions.</p>
+      </div>
+
+      <div class="faq-item">
+        <p class="faq-q">Does CCCP call any external service?</p>
+        <p class="faq-a"><strong>No.</strong> Consent is stored in a first-party browser cookie. No SaaS dependency, no telemetry, no external API calls. It would be embarrassing if it did.</p>
+      </div>
+
+      <div class="faq-item">
+        <p class="faq-q">Is it compliant with GDPR and Danish cookie law?</p>
+        <p class="faq-a">CCCP ships with explicit opt-in defaults for all non-essential categories. Everything is blocked until the visitor makes an active choice, which aligns with EU ePrivacy and Datatilsynet expectations for personal sites.</p>
+      </div>
+
+      <div class="faq-item">
+        <p class="faq-q">Does it work with GA4 and GTM out of the box?</p>
+        <p class="faq-a">Yes. <code>google-tag</code>, <code>gtag</code>, and <code>google-tag-manager</code> handles are pre-configured in the Analytics category. YouTube and Vimeo embeds are pre-configured in Functional.</p>
+      </div>
+
+      <div class="faq-item">
+        <p class="faq-q">Where do visitors change their preferences later?</p>
+        <p class="faq-a">An optional floating "Cookie settings" button appears in the footer after consent is given, allowing visitors to revisit their choices at any time.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CTA -->
+  <section class="cta reveal">
+    <h2>Get Flak Jacket</h2>
+    <p>Free. Open source. GPL-2.0+. No strings attached.</p>
+    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+      <a class="btn btn-primary" href="https://github.com/donvoorhies/cccp/releases/latest" target="_blank" rel="noopener">
+        ↓ Download latest release
+      </a>
+      <a class="btn btn-ghost" href="https://github.com/donvoorhies/cccp" target="_blank" rel="noopener">
+        View source on GitHub
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p class="footer-left">
+      CCCP — Clean Cookie Consent &nbsp;·&nbsp;
+      <a href="https://github.com/donvoorhies/cccp">github.com/donvoorhies/cccp</a> &nbsp;·&nbsp;
+      by <a href="https://don.voorhies.dk">Don W. Voorhies</a>
+    </p>
+    <p class="footer-badge">
+      <span></span> No trackers on this page
+    </p>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Fix CTA heading — accidentally says "Get Flak Jacket" should say "Get CCCP"
+    document.querySelector('.cta h2').textContent = 'Get CCCP';
+  </script>
+
+</body>
+</html>
