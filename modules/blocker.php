@@ -101,6 +101,7 @@ function cccp_block_disallowed_scripts(): void {
 		'analytics'   => cccp_parse_lines( (string) $settings['analytics_scripts'] ),
 	];
 
+	// Walk the resolved queue and remove scripts for categories that are still denied.
 	foreach ( $scripts->queue as $handle ) {
 		$handle_str = (string) $handle;
 		$src        = '';
@@ -125,4 +126,5 @@ function cccp_block_disallowed_scripts(): void {
 		}
 	}
 }
-add_action( 'wp_enqueue_scripts', 'cccp_block_disallowed_scripts', 1 );
+// Run late so other plugins/themes have already queued their scripts.
+add_action( 'wp_enqueue_scripts', 'cccp_block_disallowed_scripts', 9999 );

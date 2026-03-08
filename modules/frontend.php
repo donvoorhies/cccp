@@ -40,6 +40,7 @@ function cccp_has_valid_consent_cookie(): bool {
     return false;
   }
 
+  // Require all categories so first-load and legacy cookie states are handled consistently.
   return array_key_exists( 'preferences', $consent ) && array_key_exists( 'functional', $consent ) && array_key_exists( 'analytics', $consent );
 }
 
@@ -302,18 +303,21 @@ function cccp_enqueue_frontend_assets(): void {
   rejectButton.addEventListener("click", () => {
     writeConsent({ preferences: false, functional: false, analytics: false });
     closeBanner();
+    // Script allow/deny decisions happen server-side, so reload to apply immediately.
     window.location.reload();
   });
 
   saveButton.addEventListener("click", () => {
     writeConsent(currentState());
     closeBanner();
+    // Script allow/deny decisions happen server-side, so reload to apply immediately.
     window.location.reload();
   });
 
   acceptButton.addEventListener("click", () => {
     writeConsent({ preferences: true, functional: true, analytics: true });
     closeBanner();
+    // Script allow/deny decisions happen server-side, so reload to apply immediately.
     window.location.reload();
   });
 
