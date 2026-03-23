@@ -285,7 +285,9 @@ function cccp_enqueue_frontend_assets(): void {
 
   function writeConsent(consent) {
     const expires = new Date(Date.now() + cookieDays * 86400000).toUTCString();
-    document.cookie = "cccp_consent=" + encodeURIComponent(JSON.stringify(consent)) + "; expires=" + expires + "; path=/; SameSite=Lax";
+    // Add Secure flag on HTTPS — required by Brave and modern Chromium on Android.
+    const secure = location.protocol === "https:" ? "; Secure" : "";
+    document.cookie = "cccp_consent=" + encodeURIComponent(JSON.stringify(consent)) + "; expires=" + expires + "; path=/; SameSite=Lax" + secure;
   }
 
   function closeBanner() {
@@ -300,25 +302,27 @@ function cccp_enqueue_frontend_assets(): void {
     banner.classList.add("cccp-visible");
   }
 
-  rejectButton.addEventListener("click", () => {
-    writeConsent({ preferences: false, functional: false, analytics: false });
+  // Small delay lets the cookie write flush before reloading.
+  // Prevents a hang in Brave on Android where document.cookie writes
+  // are committed slightly later than in Chrome/Firefox.
+  function saveAndReload(consent) {
+    writeConsent(consent);
     closeBanner();
-    // Script allow/deny decisions happen server-side, so reload to apply immediately.
-    window.location.reload();
+    setTimeout(() => {
+      window.location.reload();
+    }, 80);
+  }
+
+  rejectButton.addEventListener("click", () => {
+    saveAndReload({ preferences: false, functional: false, analytics: false });
   });
 
   saveButton.addEventListener("click", () => {
-    writeConsent(currentState());
-    closeBanner();
-    // Script allow/deny decisions happen server-side, so reload to apply immediately.
-    window.location.reload();
+    saveAndReload(currentState());
   });
 
   acceptButton.addEventListener("click", () => {
-    writeConsent({ preferences: true, functional: true, analytics: true });
-    closeBanner();
-    // Script allow/deny decisions happen server-side, so reload to apply immediately.
-    window.location.reload();
+    saveAndReload({ preferences: true, functional: true, analytics: true });
   });
 
   if (reopenButton) {
