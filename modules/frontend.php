@@ -296,6 +296,7 @@ function cccp_enqueue_frontend_assets(): void {
 
   function writeConsent(consent) {
     const expires = new Date(Date.now() + cookieDays * 86400000).toUTCString();
+    // Add Secure flag on HTTPS — required by Brave and modern Chromium on Android.
     const secure = location.protocol === "https:" ? "; Secure" : "";
     document.cookie = "cccp_consent=" + encodeURIComponent(JSON.stringify(consent)) + "; expires=" + expires + "; path=/; SameSite=Lax" + secure;
   }
@@ -314,26 +315,27 @@ function cccp_enqueue_frontend_assets(): void {
 
   function saveAndReload(consent) {
     writeConsent(consent);
-    // localStorage fallback for browsers that block programmatic navigation.
+    // localStorage fallback for browsers that block programmatic navigation (e.g. Brave Android).
     try { localStorage.setItem("cccp_dismissed", "1"); } catch(e) {}
     closeBanner();
     window.location.href = window.location.href;
   }
 
+  // Guard against double-firing from both touchend and click on the same tap.
   let handling = false;
   function addHandler(el, fn) {
     el.addEventListener("touchend", (e) => {
       if (handling) return;
       handling = true;
       e.preventDefault();
-      fn(e);
+      fn();
       setTimeout(() => { handling = false; }, 500);
     });
     el.addEventListener("click", (e) => {
       if (handling) return;
       handling = true;
       e.preventDefault();
-      fn(e);
+      fn();
       setTimeout(() => { handling = false; }, 500);
     });
   }
