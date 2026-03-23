@@ -118,3 +118,9 @@ No. Consent is stored in a browser cookie only. No SaaS dependency, no telemetry
 * Settings tabs for General, Scripts, and Appearance.
 * Cookie Policy generator.
 * Footer reopen button and clean-cookie badge.
+
+
+NOTE: Regarding Brave browser on Android (03/23/2026)
+Brave on Android blocks programmatic page navigation (window.location.href) initiated from touch event handlers, even when Shields are fully disabled. This means the standard reload-after-consent flow silently fails — the banner animates closed but the page never reloads.
+CCCP works around this with two measures: a localStorage flag that hides the banner immediately on consent regardless of whether navigation succeeds, and touchend event listeners alongside the standard click listeners to ensure touch events are captured reliably. The cookie is still written correctly — the localStorage flag simply prevents the banner from reappearing on subsequent loads when the reload was blocked.
+This behaviour was observed on Brave for Android 1.x with default and custom Shield settings and is unrelated to script blocking, cookie blocking, or fingerprint protection settings.
