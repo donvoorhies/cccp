@@ -29,19 +29,19 @@ function cccp_should_render_frontend(): bool {
  * Check whether consent cookie is valid and complete.
  */
 function cccp_has_valid_consent_cookie(): bool {
-  if ( ! isset( $_COOKIE['cccp_consent'] ) ) {
-    return false;
-  }
+	if ( ! isset( $_COOKIE['cccp_consent'] ) ) {
+		return false;
+	}
 
-  $raw     = stripslashes( (string) $_COOKIE['cccp_consent'] );
-  $consent = json_decode( $raw, true );
+	$raw     = stripslashes( (string) $_COOKIE['cccp_consent'] );
+	$consent = json_decode( $raw, true );
 
-  if ( ! is_array( $consent ) ) {
-    return false;
-  }
+	if ( ! is_array( $consent ) ) {
+		return false;
+	}
 
-  // Require all categories so first-load and legacy cookie states are handled consistently.
-  return array_key_exists( 'preferences', $consent ) && array_key_exists( 'functional', $consent ) && array_key_exists( 'analytics', $consent );
+	// Require all categories so first-load and legacy cookie states are handled consistently.
+	return array_key_exists( 'preferences', $consent ) && array_key_exists( 'functional', $consent ) && array_key_exists( 'analytics', $consent );
 }
 
 /**
@@ -59,7 +59,7 @@ function cccp_enqueue_frontend_assets(): void {
 	}
 
 	$lifetime_days = max( 1, absint( (string) $settings['cookie_lifetime_days'] ) );
-  $has_cookie    = cccp_has_valid_consent_cookie();
+	$has_cookie    = cccp_has_valid_consent_cookie();
 	$consent       = cccp_get_cookie_consent();
 
 	$style = '
@@ -168,6 +168,8 @@ function cccp_enqueue_frontend_assets(): void {
   border: 1px solid #cbd5e1;
   background: transparent;
   color: #1f2937;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 .cccp-btn:hover,
 .cccp-btn:focus-visible {
@@ -246,6 +248,15 @@ function cccp_enqueue_frontend_assets(): void {
   const banner = document.getElementById("cccp-banner");
   if (!banner) return;
 
+  // Fallback: if navigation was blocked last time (e.g. Brave Android),
+  // keep banner hidden via localStorage so it does not reappear.
+  try {
+    if (localStorage.getItem("cccp_dismissed") === "1") {
+      banner.classList.add("cccp-dismissed");
+      banner.classList.remove("cccp-visible");
+    }
+  } catch(e) {}
+
   const hasValidConsentCookie = ' . ( $has_cookie ? 'true' : 'false' ) . ';
   const consentFromServer = ' . wp_json_encode( $consent ) . ';
   const cookieDays = ' . (int) $lifetime_days . ';
@@ -285,7 +296,6 @@ function cccp_enqueue_frontend_assets(): void {
 
   function writeConsent(consent) {
     const expires = new Date(Date.now() + cookieDays * 86400000).toUTCString();
-    // Add Secure flag on HTTPS — required by Brave and modern Chromium on Android.
     const secure = location.protocol === "https:" ? "; Secure" : "";
     document.cookie = "cccp_consent=" + encodeURIComponent(JSON.stringify(consent)) + "; expires=" + expires + "; path=/; SameSite=Lax" + secure;
   }
@@ -302,32 +312,48 @@ function cccp_enqueue_frontend_assets(): void {
     banner.classList.add("cccp-visible");
   }
 
-  // Small delay lets the cookie write flush before reloading.
-  // Prevents a hang in Brave on Android where document.cookie writes
-  // are committed slightly later than in Chrome/Firefox.
   function saveAndReload(consent) {
     writeConsent(consent);
+    // localStorage fallback for browsers that block programmatic navigation.
+    try { localStorage.setItem("cccp_dismissed", "1"); } catch(e) {}
     closeBanner();
-    setTimeout(() => {
-      window.location.reload();
-    }, 80);
+    window.location.href = window.location.href;
   }
 
-  rejectButton.addEventListener("click", () => {
+  let handling = false;
+  function addHandler(el, fn) {
+    el.addEventListener("touchend", (e) => {
+      if (handling) return;
+      handling = true;
+      e.preventDefault();
+      fn(e);
+      setTimeout(() => { handling = false; }, 500);
+    });
+    el.addEventListener("click", (e) => {
+      if (handling) return;
+      handling = true;
+      e.preventDefault();
+      fn(e);
+      setTimeout(() => { handling = false; }, 500);
+    });
+  }
+
+  addHandler(acceptButton, () => {
+    saveAndReload({ preferences: true, functional: true, analytics: true });
+  });
+
+  addHandler(rejectButton, () => {
     saveAndReload({ preferences: false, functional: false, analytics: false });
   });
 
-  saveButton.addEventListener("click", () => {
+  addHandler(saveButton, () => {
     saveAndReload(currentState());
-  });
-
-  acceptButton.addEventListener("click", () => {
-    saveAndReload({ preferences: true, functional: true, analytics: true });
   });
 
   if (reopenButton) {
     reopenButton.addEventListener("click", (event) => {
       event.preventDefault();
+      try { localStorage.removeItem("cccp_dismissed"); } catch(e) {}
       openBannerFromCookie();
     });
   }
@@ -341,21 +367,21 @@ function cccp_enqueue_frontend_assets(): void {
   }
 })();';
 
-  add_action(
-    'wp_footer',
-    static function () use ( $style ): void {
-      echo '<style id="cccp-frontend-style">' . $style . '</style>';
-    },
-    18
-  );
+	add_action(
+		'wp_footer',
+		static function () use ( $style ): void {
+			echo '<style id="cccp-frontend-style">' . $style . '</style>';
+		},
+		18
+	);
 
-  add_action(
-    'wp_footer',
-    static function () use ( $script ): void {
-      echo '<script id="cccp-frontend-script">' . $script . '</script>';
-    },
-    25
-  );
+	add_action(
+		'wp_footer',
+		static function () use ( $script ): void {
+			echo '<script id="cccp-frontend-script">' . $script . '</script>';
+		},
+		25
+	);
 
 	if ( ! empty( $settings['enable_settings_button'] ) && $has_cookie ) {
 		add_action(
@@ -377,12 +403,12 @@ function cccp_render_banner(): void {
 		return;
 	}
 
-  $settings      = cccp_get_settings();
-  $banner_class  = 'cccp-banner';
-  $has_consent   = cccp_has_valid_consent_cookie();
-  $banner_class .= $has_consent ? ' cccp-dismissed' : ' cccp-visible';
+	$settings      = cccp_get_settings();
+	$banner_class  = 'cccp-banner';
+	$has_consent   = cccp_has_valid_consent_cookie();
+	$banner_class .= $has_consent ? ' cccp-dismissed' : ' cccp-visible';
 	?>
-  <div id="cccp-banner" class="<?php echo esc_attr( $banner_class ); ?>" role="dialog" aria-label="<?php esc_attr_e( 'Cookie consent', 'cccp' ); ?>" aria-live="polite">
+	<div id="cccp-banner" class="<?php echo esc_attr( $banner_class ); ?>" role="dialog" aria-label="<?php esc_attr_e( 'Cookie consent', 'cccp' ); ?>" aria-live="polite">
 		<div class="cccp-inner">
 			<p class="cccp-text"><?php echo esc_html( (string) $settings['banner_text'] ); ?></p>
 			<div class="cccp-toggles">
